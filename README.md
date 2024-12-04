@@ -13,4 +13,4 @@
 **ZIP_FILE** = "downloaded_file.zip"<br>
 **PATH_TO_EXTRACT** = "PATH"<br>
 **BASE_URL** = "https://cloud-api.yandex.net/v1/disk/public/resources/download?"<br>
-***PUBLIC_KEY*** = "1u09L12324og6qQ"  # в конце ссылки на папку/файл  в URL от ЯД"
+**PUBLIC_KEY** = "1u09L12324og6qQ"  # в конце ссылки на папку/файл  в URL от ЯД"
