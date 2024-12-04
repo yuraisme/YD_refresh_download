@@ -54,8 +54,7 @@ class Telegramm:
                 try:
                     with open(os.path.join(path_to_extract, file_path), "rb") as photo:
                         if file_path[-3:] == 'txt':
-                            for line in photo.readlines():
-                                response =self._send_message(str(line))
+                            response = self._send_message(str(photo.read()))
                         else:
                             response = requests.post(
                                 URL + TELEGRAMM_METOD[file_path[-3:]],
