@@ -1,11 +1,15 @@
 import requests
 import os
+from dotenv import load_dotenv
 
-# Токен вашего бота
-BOT_TOKEN = "7693612461:AAFvWVYCsRKW_zghpGcN0jDKHq6BC0BxAjA"
+load_dotenv()
+ENV = dict(os.environ)
+BOT_TOKEN = ENV["BOT_TOKEN"]
+CHAT_ID = ENV["CHAT_ID"]
+
 
 # ID чата, куда нужно отправить фото (можно получить с помощью getUpdates)
-CHAT_ID = "416521040"
+
 
 
 # URL метода sendPhoto API Telegram
@@ -27,20 +31,38 @@ TELEGRAMM_METOD = {
     "pdf": "sendDocument",
 }
 
-
-class Telegramm:
+    
+class Telegramm:   
+    
+    def _send_message(self, message):
+        # в   начале префикс b  - убираем
+        message = message[2:].replace("'",'')
+        payload = {
+           "chat_id": CHAT_ID,
+            "text": message
+        }
+        response = requests.post(
+                            URL +"sendMessage",
+                            json=payload,
+                            timeout=1000
+                        )
+        return response
 
     def send_photo(self, path_to_extract: str, list_photos=None):
         if list_photos is not None:
             for file_path in list_photos:
                 try:
                     with open(os.path.join(path_to_extract, file_path), "rb") as photo:
-                        response = requests.post(
-                            URL + TELEGRAMM_METOD[file_path[-3:]],
-                            data={"chat_id": CHAT_ID},
-                            files={FILE_TYPES[file_path[-3:]]: photo},
-                            timeout=1000,
-                        )
+                        if file_path[-3:] == 'txt':
+                            for line in photo.readlines():
+                                response =self._send_message(str(line))
+                        else:
+                            response = requests.post(
+                                URL + TELEGRAMM_METOD[file_path[-3:]],
+                                data={"chat_id": CHAT_ID},
+                                files={FILE_TYPES[file_path[-3:]]: photo},
+                                timeout=1000,
+                            )
                         # Проверка результата
                         if response.status_code == 200:
                             print("Файл успешно отправлен!")
