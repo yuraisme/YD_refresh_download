@@ -2,8 +2,10 @@ import os
 import requests
 from zipfile import ZipFile
 from urllib.parse import urlencode
+from logger import init_logging
 
-FILE_LIST_NAME = "list.txt"  # файл для сохранения предыдущих списков
+logger = init_logging('DEBUG',name ='loadzip.py')
+logger.info("Start module load zip")
 
 
 class LoadZip:
@@ -24,16 +26,30 @@ class LoadZip:
             zip_filename (str):
             unzip_path (str): куда распаковываем
         """
+        logger.info('try to get final load url (https:///....zip)')
         final_url = self.base_url + urlencode(dict(public_key=self.public_key))
         # Получаем загрузочную ссылку для Zip файла
         response = requests.get(final_url)
         return response.json()["href"]
 
     def load_zip_file(self, path_to_extract: str, zip_filename: str):
+        """Скачиваем и распаковываем ZIP файл для 
+        последующего анализа
+
+        Args:
+            path_to_extract (str): _description_
+            zip_filename (str): _description_
+
+        Returns:
+            _type_: _description_
+        """
         #  создаем если не было
         os.makedirs(path_to_extract, exist_ok=True)
         self.path_to_extract = path_to_extract
         self.zip_file_name = zip_filename
+        full_file_path = os.path.join(path_to_extract, zip_filename)
+        self.zip_file_name = zip_filename
+        
         # подсовываем нужные аргументы
         try:
             download_url = self.__request_files_in_zip()
@@ -44,12 +60,19 @@ class LoadZip:
         try:
             download_response = requests.get(download_url)
             if download_response.status_code == 200:
-                with open(os.path.join(path_to_extract, zip_filename), "wb") as f:
-                    f.write(download_response.content)
-                    print("zip file wrote successfully!")
-                    return f.name
-            self.zip_file_name = zip_filename
+                # сначала узнаем, не такой же уже лежит на диске
+                if os.path.exists(full_file_path):
+                    if os.path.getsize(full_file_path) == len(download_response.content):
+                        logger.info("Nothing new - zip file the same")
+                        return False
+                with open(full_file_path, "wb") as zip_file:
+                    zip_file.write(download_response.content)
+                    logger.info('file %s saved succefully', full_file_path)
+                    # print("zip file wrote successfully!")
+                    return zip_file.name
+           
         except Exception as e:
+            logger.error('Error in ZIP file download or save: %s', e)
             print(f"baaaad request!: {e} ")
             return False
 
