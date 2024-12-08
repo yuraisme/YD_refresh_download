@@ -14,3 +14,7 @@
 **PATH_TO_EXTRACT** = "PATH"<br>
 **BASE_URL** = "https://cloud-api.yandex.net/v1/disk/public/resources/download?"<br>
 **PUBLIC_KEY** = "1u09L12324og6qQ"  # в конце ссылки на папку/файл  в URL от ЯД"
+<br><br>
+` сначала нужно напечатать что-то в бота, а потом в Linux:` <br>
+ *curl https://api.telegram.org/bot{ВАШ:ТОКЕН}/getUpdates*<br>
+**CHAT_ID**  = ID в JSON  и будет вашим chat ID
