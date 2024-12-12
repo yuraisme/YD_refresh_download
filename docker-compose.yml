@@ -1,0 +1,10 @@
+version: "3.9"
+
+services:
+ profitgate_app:
+    build:
+      context: .
+    restart: always
+    volumes:
+      - ./logs:/app/logs
+      - ./KRE:/app/KRE

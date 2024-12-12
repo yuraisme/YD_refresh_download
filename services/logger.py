@@ -2,17 +2,24 @@ import logging
 from dotenv import load_dotenv
 import os
 from typing import Literal
+import sys
 
 load_dotenv()
-LOG_DIR = dict(os.environ)['LOG_DIR']
+LOG_DIR = ""
+LOG_FILE_NAME = ""
+
+try:
+    LOG_DIR = dict(os.environ)['LOG_DIR']
+except KeyError:
+    print('.env не найден или LOG_DIR в ней, выходим')
+    sys.exit(0)
+
 LOG_FILE_NAME = os.path.join(LOG_DIR,dict(os.environ)['LOG_FILE'])
-
-
 #  создаем если не было
 os.makedirs(LOG_DIR, exist_ok=True)
-        
-# Настройка логирования
 
+
+# Настройка логирования
 def init_logging(log_level:Literal["CRITICAL",
                                    "FATAL",
                                    "ERROR",
@@ -37,6 +44,8 @@ def init_logging(log_level:Literal["CRITICAL",
         log_level (int): logging.level
         stream_on(bool):True  - enable streaming to console
     """
+    
+
     
     handlers = [logging.FileHandler(LOG_FILE_NAME), # Запись логов в файл
     ]

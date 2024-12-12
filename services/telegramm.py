@@ -1,7 +1,7 @@
 import requests
 import os
 from dotenv import load_dotenv
-from logger import init_logging
+from services.logger import init_logging
 
 load_dotenv()
 

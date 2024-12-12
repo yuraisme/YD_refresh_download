@@ -1,5 +1,5 @@
 # Используем официальный Python-образ
-FROM python:3.13-slim
+FROM python:3.10-slim
 
 
 # Устанавливаем рабочую директорию и копируем
@@ -15,10 +15,8 @@ ENV POETRY_VIRTUALENVS_CREATE=false \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 
-
-
 # Устанавливаем зависимости
 RUN poetry install --no-root
 
 # Указываем команду для запуска приложения
-CMD ["python3", "main.py"]
+CMD ["python3", "__main.py__"]

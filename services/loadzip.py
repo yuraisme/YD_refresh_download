@@ -2,9 +2,9 @@ import os
 import requests
 from zipfile import ZipFile
 from urllib.parse import urlencode
-from logger import init_logging
+from services.logger import init_logging
 
-logger = init_logging('DEBUG',name ='loadzip.py')
+logger = init_logging('INFO',name ='loadzip.py')
 logger.info("Start module load zip")
 
 
@@ -95,5 +95,5 @@ class LoadZip:
 if __name__ == "__main__":
     zip_file = LoadZip(
         "https://cloud-api.yandex.net/v1/disk/public/resources/download?",
-        "564fefgh5467",
+        "564f234gh5467",
     )
