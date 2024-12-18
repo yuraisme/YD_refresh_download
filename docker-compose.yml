@@ -6,6 +6,8 @@ services:
     build:
       context: .
     restart: always
+    image: profit_load_app:latest
     volumes:
       - ./logs:/app/logs
       - ./KRE:/app/KRE
+    
