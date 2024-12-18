@@ -1,7 +1,8 @@
 version: "3.9"
 
+
 services:
- profitgate_app:
+ profit_load_app:
     build:
       context: .
     restart: always
