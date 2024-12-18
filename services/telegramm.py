@@ -1,7 +1,7 @@
 import requests
 import os
 from dotenv import load_dotenv
-from services.logger import init_logging
+from loguru import logger
 
 load_dotenv()
 
@@ -9,8 +9,6 @@ ENV = dict(os.environ)
 BOT_TOKEN = ENV["BOT_TOKEN"]
 CHAT_ID = ENV["CHAT_ID"]
 
-
-logger = init_logging('DEBUG',name ='telegramm.py')
 logger.info("Start module telegramm message send")
 
 # URL метода sendPhoto API Telegram
@@ -32,8 +30,10 @@ TELEGRAMM_METOD_TELEGRAM = {
     "txt": "sendDocument",
     "pdf": "sendDocument",
 }
-class Telegramm:     
+class Telegramm:   
+    @logger.catch 
     def _send_message(self, message):
+        """Для посылки текстовых сообщений"""
         # в   начале префикс b  - убираем и кавычки -тоже
         message = message[2:].replace("'",'')
         payload = {
@@ -45,12 +45,13 @@ class Telegramm:
                             timeout=1000
                         )
         return response
-
+    @logger.catch
     def send_data(self, path_to_extract: str, list_files=None):
+        """для посылки двоичных файлов"""
         if list_files is not None and path_to_extract !="":
             for file_path in list_files:
                 try: #смотрим - текстовый или бинарный файл к нам попал
-                    logger.debug("what kind file need to send: %s", file_path)
+                    logger.debug(f"what kind file need to send: {file_path}")
                     file_ext = file_path[-3:]
                     with open(os.path.join(path_to_extract, file_path), "rb") as photo:
                         if file_ext == 'txt':
@@ -66,14 +67,10 @@ class Telegramm:
                             )
                         # Проверка результата
                         if response.status_code == 200:
-                            logger.info("File %s succefully send", file_path)
-                            print("Файл успешно отправлен!")
+                            logger.success(f"File {file_path} succefully send")
                         else:
-                            logger.error("Error %s",response.text)
-                            print(
-                                f"Ошибка: {response.status_code},\
-                                  {response.text}"
-                            )
+                            logger.error(f"Error: {response.text}")
+                       
                 except Exception as e:
-                    logger.error("Error %s", e)
-                    print(f"Что-то случилось!: {e}")
+                    logger.error(f"Error {e}")
+                    

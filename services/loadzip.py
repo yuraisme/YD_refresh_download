@@ -2,9 +2,11 @@ import os
 import requests
 from zipfile import ZipFile
 from urllib.parse import urlencode
-from services.logger import init_logging
+from loguru import logger
+# from services.logger import init_logging
 
-logger = init_logging('INFO',name ='loadzip.py')
+# logger = init_logging('INFO',name ='loadzip.py')
+
 logger.info("Start module load zip")
 
 
@@ -58,7 +60,7 @@ class LoadZip:
             return False
         # Загружаем файл и сохраняем его
         try:
-            download_response = requests.get(download_url)
+            download_response = requests.get(download_url, timeout=1000)
             if download_response.status_code == 200:
                 # сначала узнаем, не такой же уже лежит на диске
                 if os.path.exists(full_file_path):
@@ -67,15 +69,15 @@ class LoadZip:
                         return False
                 with open(full_file_path, "wb") as zip_file:
                     zip_file.write(download_response.content)
-                    logger.info('file %s saved succefully', full_file_path)
+                    logger.info(f'file {full_file_path} saved succefully')
                     # print("zip file wrote successfully!")
                     return zip_file.name
            
         except Exception as e:
-            logger.error('Error in ZIP file download or save: %s', e)
-            print(f"baaaad request!: {e} ")
+            logger.error(f'Error in ZIP file download or save: {e}')
             return False
 
+    @logger.catch
     def extract_zip(self):
         if self.zip_file_name is not None:
             with ZipFile(
